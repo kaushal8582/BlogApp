@@ -2,17 +2,26 @@ import React, { useState, useContext, useEffect } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { BsFillArrowLeftCircleFill } from "react-icons/bs";
 import myContext from "../../../context/data/myContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button, Typography } from "@material-tailwind/react";
 import { toast } from "react-hot-toast";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { fireDb, storage } from "../../../firebase/FirebaseConfig";
-import { addDoc, collection, Timestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  Timestamp,
+  updateDoc,
+} from "firebase/firestore";
 
 function CreateBlog() {
   const context = useContext(myContext);
   const { mode } = context;
   const navigate = useNavigate();
+  const {id} = useParams();
+  const [imageUrl,setImageUrl] = useState('')
 
   const [blogs, setBlogs] = useState({
     title: "",
@@ -23,7 +32,7 @@ function CreateBlog() {
   const [thumbnail, setthumbnail] = useState();
   const [text, settext] = useState("");
 
-  const addBlog = async () => {
+  const addOrUpdateBlog = async () => {
     if (
       blogs.title === "" ||
       blogs.categories === "" ||
@@ -32,49 +41,118 @@ function CreateBlog() {
     ) {
       toast.error("Please fill All Fields");
     }
-    uploadImage();
+
+    if (id) {
+      await updateBlog();
+    } else {
+      await addBlog();
+    }
   };
 
-  const uploadImage = () => {
-    if (!thumbnail) {
-      return;
+  const updateBlog = async () => {
+    let url = imageUrl;
+    console.log("thum",thumbnail);
+    if(thumbnail){
+      url = await uploadImage();
     }
 
-    const imgRef = ref(storage, `blogimage/${thumbnail.name}`);
-    uploadBytes(imgRef, thumbnail).then((snapshot) => {
-      getDownloadURL(snapshot.ref).then((url) => {
-        const productRef = collection(fireDb, "blogPosts");
-        try {
-          addDoc(productRef, {
-            title: blogs.title,
-            categories: blogs.categories,
-            content: blogs.content,
-            thumbnail: url,
-            time: Timestamp.now(),
-            date: new Date().toLocaleString("es-us", {
-              month: "short",
-              day: "2-digit",
-              year: "numeric",
-            }),
-          });
-
-          navigate("/dashboard");
-          toast.success("Add Post Successfully");
-        } catch (error) {
-          toast.error("error");
-          console.log(error);
-        }
+    console.log("url",url,imageUrl);
+    const docRef = doc(fireDb, "blogPosts", id);
+    console.log("doc ref", docRef);
+    try {
+      await updateDoc(docRef, {
+        title: blogs.title,
+        categories: blogs.categories,
+        content: blogs.content,
+        thumbnail:url,
       });
-    });
+
+      toast.success("Update Blog Successfyll");
+      navigate("/dashboard")
+
+    } catch (error) {
+      toast.error("Not update post");
+      navigate("/dashboard");
+    }
+
+   
   };
 
+  const addBlog = async () => {
+    const url = await uploadImage();
+    const productRef = collection(fireDb, "blogPosts");
+    try {
+      addDoc(productRef, {
+        title: blogs.title,
+        categories: blogs.categories,
+        content: blogs.content,
+        thumbnail: url,
+        time: Timestamp.now(),
+        date: new Date().toLocaleString("es-us", {
+          month: "short",
+          day: "2-digit",
+          year: "numeric",
+        }),
+      });
+
+      navigate("/dashboard");
+      toast.success("Add Post Successfully");
+    } catch (error) {
+      toast.error("error");
+      console.log(error);
+    }
+  };
+
+  const uploadImage = async () => {
+  if (!thumbnail || !thumbnail.name) {
+    console.error("No thumbnail selected");
+    return imageUrl; // Return null if thumbnail is not defined or has no name property
+  }
+
+  try {
+    const imgRef = ref(storage, `blogimage/${thumbnail.name}`);
+    const snapshot = await uploadBytes(imgRef, thumbnail);
+    const url = await getDownloadURL(snapshot.ref);
+    setImageUrl(url); // Set the imageUrl state here
+    return url;
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    return imageUrl; // Return null if upload fails
+  }
+};
+
+
   // Create markup function
+  
   function createMarkup(c) {
     return { __html: c };
   }
   useEffect(() => {
-    window.scrollTo(0, 0)
-}, [])
+    window.scrollTo(0, 0);
+    if (id) {
+      const fetchBlogPost = async () => {
+        const docRef = doc(fireDb, "blogPosts", id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          console.log(data);
+          setBlogs({
+            title: data.title,
+            categories: data.categories,
+            content: data.content,
+            // :data.thumbnail
+          });
+          setImageUrl(data.thumbnail);
+        } else {
+          toast.error("BlogPost not found 😕");
+          navigate("/dashboard");
+        }
+      };
+      fetchBlogPost();
+      console.log(blogs);
+    }
+  }, [id, navigate]);
+
   return (
     <div className=" container mx-auto max-w-5xl py-6">
       <div
@@ -136,7 +214,10 @@ function CreateBlog() {
             style={{
               background: mode === "dark" ? "#dcdde1" : "rgb(226, 232, 240)",
             }}
-            onChange={(e) => setthumbnail(e.target.files[0])}
+            onChange={(e) => {
+              setthumbnail(e.target.files[0])
+              setImageUrl('')
+            }}
           />
         </div>
 
@@ -178,6 +259,7 @@ function CreateBlog() {
 
         {/* Four Editor  */}
         <Editor
+        value={blogs.content}
           apiKey="1rj6btx6rtbligax3rgw1j729rwbddpcnzyt79iubgxfxehl"
           onEditorChange={(newValue, editor) => {
             setBlogs({ ...blogs, content: newValue });
@@ -194,7 +276,7 @@ function CreateBlog() {
 
         {/* Five Submit Button  */}
         <Button
-          onClick={addBlog}
+          onClick={addOrUpdateBlog}
           className=" w-full mt-5"
           style={{
             background:
@@ -202,7 +284,7 @@ function CreateBlog() {
             color: mode === "dark" ? "rgb(30, 41, 59)" : "rgb(226, 232, 240)",
           }}
         >
-          Send
+          {id ? "Update Blog" : "Add Blog"}
         </Button>
 
         {/* Six Preview Section  */}

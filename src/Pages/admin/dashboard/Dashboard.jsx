@@ -168,6 +168,15 @@ function Dashboard() {
                     >
                       Action
                     </th>
+                    <th
+                      style={{
+                        color: mode === "dark" ? "rgb(30, 41, 59)" : "white",
+                      }}
+                      scope="col"
+                      className="px-6 py-3"
+                    >
+                      Action
+                    </th>
                   </tr>
                 </thead>
 
@@ -180,7 +189,7 @@ function Dashboard() {
                       return (
                         <tbody key={index}>
                           <tr
-                            className=" border-b-2"
+                            className=" border-b-2 "
                             style={{
                               background:
                                 mode === "dark" ? "rgb(30, 41, 59)" : "white",
@@ -254,6 +263,18 @@ function Dashboard() {
                                 Delete
                               </button>
                             </td>
+                            <td
+                              onClick={() => navigate(`/createblog/${item.id}`)}
+                              style={{
+                                color: mode === "dark" ? "white" : "black",
+                              }}
+                              className="px-6 py-4"
+                            >
+                              <button className=" px-4 py-1 rounded-lg text-white font-bold bg-blue-500">
+                                Edit Post
+                              </button>
+                            </td>
+                            
                           </tr>
                         </tbody>
                       );

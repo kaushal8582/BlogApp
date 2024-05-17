@@ -42,6 +42,14 @@ function App() {
               </AdminProcted>
             }
           />
+          <Route
+            path="/createblog/:id"
+            element={
+              <AdminProcted>
+                <CreateBlog />
+              </AdminProcted>
+            }
+          />
           <Route path="/*" element={<NoPage />} />
         </Routes>
         <Toaster />
