@@ -31,6 +31,8 @@ function CreateBlog() {
   });
   const [thumbnail, setthumbnail] = useState();
   const [text, settext] = useState("");
+  const [imgUrl,setImgUrl] = useState('');
+  const [copyUrl,setCopyUrl] = useState('');
 
   const addOrUpdateBlog = async () => {
     if (
@@ -99,6 +101,35 @@ function CreateBlog() {
       console.error(error);
     }
   };
+
+  function copyUrlfunction(){
+    navigator.clipboard.writeText(copyUrl)
+    .then(() => {
+     toast.success("copy link successfully")
+    })
+    .catch((error) => {
+      toast.error("error to copy link")
+    });
+  }
+
+  async function uploadImageFuncitoForTextarea(){
+    if(!imgUrl || !imgUrl.name){
+      console.log("plz select img");
+      toast.error("plz select img")
+      return;
+    }
+    try {
+      const imgRef = ref(storage, `blogimage/${imgUrl.name}`);
+      const snapshot = await uploadBytes(imgRef, imgUrl);
+      const url = await getDownloadURL(snapshot.ref);
+      setCopyUrl(url)
+      console.log(url);
+      toast.success("Upload image success")
+    } catch (error) {
+      console.log(error);
+      toast.error("not upload image");
+    }
+  }
 
   const uploadImage = async () => {
     if (!thumbnail || !thumbnail.name) {
@@ -186,6 +217,11 @@ function CreateBlog() {
             >
               Create blog
             </Typography>
+          </div>
+          <div className="w-[20rem] h-[7rem] bg-gray-600">
+            <input type="file" onChange={(e)=>setImgUrl(e.target.files[0])} />
+              <Button onClick={uploadImageFuncitoForTextarea} >Upload</Button>
+              {copyUrl?<Button onClick={copyUrlfunction} >Copy URL</Button>:""}
           </div>
         </div>
 
