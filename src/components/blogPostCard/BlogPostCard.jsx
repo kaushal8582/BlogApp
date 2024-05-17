@@ -12,6 +12,22 @@ function BlogPostCard() {
     window.scrollTo(0, 0)
 }, [])
 
+const stripHtml = (html) => {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || "";
+};
+
+// Function to truncate the content to a specified number of words
+const truncateContent = (content, limit) => {
+  const textContent = stripHtml(content);
+  const words = textContent.split(' ');
+  return words.length > limit ? words.slice(0, limit).join(' ') + '...' : textContent;
+};
+
+function createMarkup(c) {
+  return { __html: c };
+}
+
   return (
     <div>
       <section className="text-gray-600 body-font">
@@ -72,7 +88,9 @@ function BlogPostCard() {
                       ? 'rgb(226, 232, 240)'
                       : ' rgb(30, 41, 59)'
                   }}>
-                    Photo booth fam kinfolk cold-pressed sriracha leggings jianbing microdosing tousled waistcoat.
+                    {/* { dangerouslySetInnerHTML={createMarkup(item?.content)}} */}
+                    {truncateContent(item.content, 30)}
+                    {/* {item.content.split(' ').slice(0,35).join(" ")+(item.content.split(' ').length>30?"...":".")} */}
                   </p>
                 </div>
               </div>
