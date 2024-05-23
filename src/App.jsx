@@ -15,6 +15,8 @@ import NoPage from "./Pages/noPage/NoPage";
 import MyState from "./context/data/myState";
 import { Toaster } from "react-hot-toast";
 import CreateBlog from "./Pages/admin/createBlog/CreateBlog";
+import UserSignIn from "./Pages/Users/UserSignIn";
+import UserLogin from "./Pages/Users/UserLogin";
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
           <Route path="/allblogs" element={<AllBlogs />} />
           <Route path="/bloginfo/:id" element={<BlogInfo />} />
           <Route path="/adminlogin" element={<AdminLogin />} />
+          <Route path="/user-signin" element={<UserSignIn />} />
+          <Route path="/user-login" element={<UserLogin />} />
           <Route
             path="/dashboard"
             element={

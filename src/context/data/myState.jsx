@@ -21,7 +21,6 @@ function MyState(props) {
         });
 
         setGetAllBlog(blogArray);
-        // console.log(productsArray)
         setLoading(false);
       });
       return () => data;
@@ -57,6 +56,10 @@ function MyState(props) {
       document.body.style.backgroundColor = "white";
     }
   };
+
+
+
+  
   return (
     <MyContext.Provider
       value={{

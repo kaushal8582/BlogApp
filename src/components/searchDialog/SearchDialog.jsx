@@ -54,7 +54,7 @@ export default function SearchDialog() {
 
          
 
-          <div className="flex justify-center flex-wrap   sm:mx-auto sm:mb-2 -mx-2  mt-4 mb-2 ">
+          <div className="flex justify-start flex-wrap     sm:mb-2 -mx-2  mt-4 mb-2 ">
             <div className="p-2 sm:w-1/4 w-full flex gap-2  ">
               {getAllBlog
                 .filter((obj) => obj.title.toLowerCase().includes(searchKey.toLowerCase()))

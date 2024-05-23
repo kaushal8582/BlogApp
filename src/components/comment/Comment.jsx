@@ -1,21 +1,77 @@
 import { Button } from "@material-tailwind/react";
 import React, { useContext, useEffect } from "react";
 import myContext from "../../context/data/myContext";
+import { useNavigate } from "react-router-dom";
+import { collection, getDoc, getDocs, query, where } from "firebase/firestore";
+import { fireDb } from "../../firebase/FirebaseConfig";
 
 function Comment({
   addComment,
   commentText,
   setcommentText,
   allComment,
-  fullName,
   setFullName,
 }) {
   const context = useContext(myContext);
   const { mode } = context;
+  const navigate = useNavigate();
+
+  async function getLoginUserName() {
+    try {
+      const user = JSON.parse(localStorage.getItem("us"));
+      if (user) {
+        const userEmail = user.user.email;
+
+        const q = query(
+          collection(fireDb, "userData"),
+          where("email", "==", userEmail)
+        );
+        const snapShot = await getDocs(q);
+
+        if (!snapShot.empty) {
+          const userDoc = snapShot.docs[0];
+          console.log("useeffect UserName", userDoc.data().name);
+          let userName = userDoc.data().name;
+          setFullName(userName);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
-    window.scrollTo(0, 0)
-}, [])
+    window.scrollTo(0, 0);
+    getLoginUserName();
+  }, []);
+
+  async function validateUserForComment() {
+    try {
+      const user = JSON.parse(localStorage.getItem("us"));
+      if (user) {
+        const userEmail = user.user.email;
+
+        const q = query(
+          collection(fireDb, "userData"),
+          where("email", "==", userEmail)
+        );
+        const snapShot = await getDocs(q);
+
+        if (!snapShot.empty) {
+          const userDoc = snapShot.docs[0];
+          console.log(userDoc.data().name);
+          let userName = userDoc.data().name;
+          addComment();
+        }
+        return true;
+      } else {
+        navigate("/user-login");
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <section className=" py-8 lg:py-16">
@@ -30,26 +86,6 @@ function Comment({
         </div>
         {/* Comment Form  */}
         <form className="mb-6">
-          {/* Full Name Input  */}
-          <div
-            className="py-2 px-4 mb-4 rounded-lg rounded-t-lg 
-            shadow-[inset_0_0_4px_rgba(0,0,0,0.6)] border border-gray-200"
-            style={{
-              background: mode === "dark" ? "#353b48" : "rgb(226, 232, 240)",
-            }}
-          >
-            <input
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              type="text"
-              placeholder="Enter Full Name"
-              className="px-0 w-full text-sm border-0 focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 "
-              style={{
-                background: mode === "dark" ? "#353b48" : "rgb(226, 232, 240)",
-              }}
-            />
-          </div>
-
           {/* Text Area  */}
           <div
             className="py-2 px-4 mb-4 rounded-lg rounded-t-lg 
@@ -62,8 +98,8 @@ function Comment({
               Your comment
             </label>
             <textarea
-            value={commentText}
-            onChange={(e)=>setcommentText(e.target.value)}
+              value={commentText}
+              onChange={(e) => setcommentText(e.target.value)}
               id="comment"
               rows={6}
               className="px-0 w-full text-sm border-0 focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 "
@@ -78,7 +114,7 @@ function Comment({
           {/* Button  */}
           <div className="">
             <Button
-            onClick={addComment}
+              onClick={validateUserForComment}
               style={{
                 background:
                   mode === "dark" ? "rgb(226, 232, 240)" : "rgb(30, 41, 59)",
@@ -93,41 +129,41 @@ function Comment({
 
         {/* Bottom Item  */}
 
-          {allComment.map((item,index)=>{
-            const {fullName,commentText,date} = item;
-          return  <article
-            key={index}
-            className="p-6 mb-6 text-base rounded-lg "
-            style={{
-              background: mode === "dark" ? "#353b48" : "rgb(226, 232, 240)",
-            }}
-          >
-            <footer className="flex justify-between items-center mb-">
-              <div className="flex items-center my-2 bg-white px-2 py-1 rounded-lg ">
-                <p
-                  className="inline-flex items-center mr-3 text-lg  "
-                  style={{ color: mode === "dark" ? "black" : "black" }}
-                >
-                  {fullName}
-                </p>
-                <p
-                  className="text-sm "
-                  style={{ color: mode === "dark" ? "black" : "black" }}
-                >
-                  {date}
-                </p>
-              </div>
-            </footer>
-            <p
-              className="text-gray-500 dark:text-gray-400 text-md"
-              style={{ color: mode === "dark" ? "white" : "black" }}
+        {allComment.map((item, index) => {
+          const { fullName, commentText, date } = item;
+          return (
+            <article
+              key={index}
+              className="p-6 mb-6 text-base rounded-lg "
+              style={{
+                background: mode === "dark" ? "#353b48" : "rgb(226, 232, 240)",
+              }}
             >
-              ↳{commentText}
-            </p>
-          </article>
-          })}
-
-        
+              <footer className="flex justify-between items-center mb-">
+                <div className="flex items-center my-2 bg-white px-2 py-1 rounded-lg ">
+                  <p
+                    className="inline-flex items-center mr-3 text-lg  "
+                    style={{ color: mode === "dark" ? "black" : "black" }}
+                  >
+                    {fullName}
+                  </p>
+                  <p
+                    className="text-sm "
+                    style={{ color: mode === "dark" ? "black" : "black" }}
+                  >
+                    {date}
+                  </p>
+                </div>
+              </footer>
+              <p
+                className="text-gray-500 dark:text-gray-400 text-md"
+                style={{ color: mode === "dark" ? "white" : "black" }}
+              >
+                ↳{commentText}
+              </p>
+            </article>
+          );
+        })}
       </div>
     </section>
   );

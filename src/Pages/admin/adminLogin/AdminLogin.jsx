@@ -16,7 +16,7 @@ import {auth} from "../../../firebase/FirebaseConfig"
 
 export default function AdminLogin() {
     const context = useContext(myContext);
-    const { mode } = context;
+    const { mode  } = context;
 
     const [email,setEmail] = useState('')
     const [password,setPassword] = useState('')

@@ -61,6 +61,7 @@ const BlogInfo = () => {
       "blogPosts/" + `${params.id}/` + "comment"
     );
     try {
+     
       await addDoc(commentRef, {
         fullName,
         commentText,
@@ -226,7 +227,6 @@ const BlogInfo = () => {
           commentText={commentText}
           setcommentText={setCommentText}
           allComment={allComment}
-          fullName={fullName}
           setFullName={setFullName}
         />
       </section>
