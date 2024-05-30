@@ -46,6 +46,7 @@ function MyState(props) {
     }
   }
 
+  
   const [mode, setMode] = useState("light"); // Whether dark mode is enabled or not
   const toggleMode = () => {
     if (mode === "light") {
