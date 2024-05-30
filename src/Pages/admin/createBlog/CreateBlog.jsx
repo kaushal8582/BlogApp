@@ -293,7 +293,7 @@ function CreateBlog() {
 
         <Editor
           value={blogs.content}
-          apiKey="1rj6btx6rtbligax3rgw1j729rwbddpcnzyt79iubgxfxehl"
+          apiKey='1rj6btx6rtbligax3rgw1j729rwbddpcnzyt79iubgxfxehl'
           onEditorChange={(newValue, editor) => {
             setBlogs({ ...blogs, content: newValue });
             settext(editor.getContent({ format: "text" }));
