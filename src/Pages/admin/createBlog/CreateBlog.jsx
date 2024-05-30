@@ -21,7 +21,7 @@ function CreateBlog() {
   const { mode } = context;
   const navigate = useNavigate();
   const { id } = useParams();
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageUrl, setImageUrl] = useState("");
 
   const [blogs, setBlogs] = useState({
     title: "",
@@ -31,8 +31,8 @@ function CreateBlog() {
   });
   const [thumbnail, setthumbnail] = useState();
   const [text, settext] = useState("");
-  const [imgUrl,setImgUrl] = useState('');
-  const [copyUrl,setCopyUrl] = useState('');
+  const [imgUrl, setImgUrl] = useState("");
+  const [copyUrl, setCopyUrl] = useState("");
 
   const addOrUpdateBlog = async () => {
     if (
@@ -42,16 +42,13 @@ function CreateBlog() {
       thumbnail === ""
     ) {
       toast.error("Please fill All Fields");
-    }
-
-    else{
+    } else {
       if (id) {
         await updateBlog();
       } else {
         await addBlog();
       }
     }
-   
   };
 
   const updateBlog = async () => {
@@ -102,29 +99,30 @@ function CreateBlog() {
     }
   };
 
-  function copyUrlfunction(){
-    navigator.clipboard.writeText(copyUrl)
-    .then(() => {
-     toast.success("copy link successfully")
-    })
-    .catch((error) => {
-      toast.error("error to copy link")
-    });
+  function copyUrlfunction() {
+    navigator.clipboard
+      .writeText(copyUrl)
+      .then(() => {
+        toast.success("copy link successfully");
+      })
+      .catch((error) => {
+        toast.error("error to copy link");
+      });
   }
 
-  async function uploadImageFuncitoForTextarea(){
-    if(!imgUrl || !imgUrl.name){
+  async function uploadImageFuncitoForTextarea() {
+    if (!imgUrl || !imgUrl.name) {
       console.log("plz select img");
-      toast.error("plz select img")
+      toast.error("plz select img");
       return;
     }
     try {
       const imgRef = ref(storage, `blogimage/${imgUrl.name}`);
       const snapshot = await uploadBytes(imgRef, imgUrl);
       const url = await getDownloadURL(snapshot.ref);
-      setCopyUrl(url)
+      setCopyUrl(url);
       console.log(url);
-      toast.success("Upload image success")
+      toast.success("Upload image success");
     } catch (error) {
       console.log(error);
       toast.error("not upload image");
@@ -148,8 +146,6 @@ function CreateBlog() {
       return imageUrl;
     }
   };
-
-
 
   const handleEditorImageUpload = async (blobInfo, success, failure) => {
     try {
@@ -219,9 +215,9 @@ function CreateBlog() {
             </Typography>
           </div>
           <div className="w-[20rem] h-[7rem] bg-gray-600">
-            <input type="file" onChange={(e)=>setImgUrl(e.target.files[0])} />
-              <Button onClick={uploadImageFuncitoForTextarea} >Upload</Button>
-              {copyUrl?<Button onClick={copyUrlfunction} >Copy URL</Button>:""}
+            <input type="file" onChange={(e) => setImgUrl(e.target.files[0])} />
+            <Button onClick={uploadImageFuncitoForTextarea}>Upload</Button>
+            {copyUrl ? <Button onClick={copyUrlfunction}>Copy URL</Button> : ""}
           </div>
         </div>
 
@@ -293,7 +289,7 @@ function CreateBlog() {
 
         <Editor
           value={blogs.content}
-          apiKey='zv5b9m8g490mt2imkfcmqawyskamtuvfzps1rk1cizj8uzcf'
+          apiKey="zv5b9m8g490mt2imkfcmqawyskamtuvfzps1rk1cizj8uzcf"
           onEditorChange={(newValue, editor) => {
             setBlogs({ ...blogs, content: newValue });
             settext(editor.getContent({ format: "text" }));
@@ -302,12 +298,9 @@ function CreateBlog() {
             settext(editor.getContent({ format: "text" }));
           }}
           init={{
-            plugins:
-              "link image imagetools media table codesample code textcolor colorpicker lists",
+            plugins: "link image media table lists",
             toolbar:
-              "undo redo | formatselect | bold italic forecolor backcolor | \
-                        alignleft aligncenter alignright alignjustify | \
-                        bullist numlist outdent indent | removeformat | image code",
+              "undo redo | formatselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media table | removeformat",
             images_upload_handler: handleEditorImageUpload,
             images_upload_credentials: true,
             automatic_uploads: true,
