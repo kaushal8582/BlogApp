@@ -298,14 +298,19 @@ function CreateBlog() {
             settext(editor.getContent({ format: "text" }));
           }}
           init={{
-            plugins: "link image media table lists",
+            plugins: "link image media table lists code preview codesample",
             toolbar:
-              "undo redo | formatselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media table | removeformat",
+              " preview |codesample |undo redo | formatselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media table | removeformat | code",
             images_upload_handler: handleEditorImageUpload,
             images_upload_credentials: true,
             automatic_uploads: true,
+            code_dialog_height: 400, // Set the height of the code dialog
+            code_dialog_width: 800, // Set the width of the code dialog
+            code_embedded: true, // Enable embedded code view
+            readonly: false,
           }}
         />
+
         <Button
           className="mt-4"
           onClick={() => {
