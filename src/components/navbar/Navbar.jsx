@@ -12,6 +12,7 @@ import { AiOutlineShareAlt, AiOutlineSearch } from 'react-icons/ai'
 import myContext from "../../context/data/myContext";
 import SearchDialog from "../searchDialog/SearchDialog";
 import ShareDialogBox from "../shareDialogBox/ShareDialogBox";
+import image from "../../assets/image.png"
 
 
 export default function Nav() {
@@ -55,9 +56,9 @@ export default function Nav() {
                 className="p-1 font-normal"
                 style={{ color: mode === 'dark' ? 'white' : 'white' }}
             >
-                <Link to={'/adminlogin'} className="flex items-center">
+                {/* <Link to={'/adminlogin'} className="flex items-center">
                     Admin Login
-                </Link>
+                </Link> */}
             </Typography>
         </ul>
     );
@@ -82,11 +83,12 @@ export default function Nav() {
                             {/* Logo Image  */}
                             <img
                                 className=' w-10 h-10 '
-                                src='https://cdn-icons-png.flaticon.com/128/3685/3685253.png'
+                                
+                                src={image}
                             />
                             {/* Logo Text  */}
                             <span>
-                                Developer kaushal
+                                <h3 >Job <span>Search</span> </h3>
                             </span>
                         </Typography>
                     </Link>

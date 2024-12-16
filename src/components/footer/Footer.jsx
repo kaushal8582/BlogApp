@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import myContext from '../../context/data/myContext';
+import image from "../../assets/image.png"
 
 function Footer() {
     const context = useContext(myContext);
@@ -12,11 +13,11 @@ function Footer() {
                 <div className="flex title-font font-medium items-center md:justify-start justify-center text-gray-900">
                     {/* logo  */}
                     <img className='w-10'
-                        src="https://cdn-icons-png.flaticon.com/128/3685/3685253.png" alt="logo"
+                        src={image} alt="logo"
                     />
                     {/* logo text  */}
                     <span className="ml-3 text-xl text-white">
-                        kaushal
+                        Job Search
                     </span>
                 </div>
 
@@ -64,7 +65,7 @@ function Footer() {
                     </a>
 
                     {/* Icon 3  */}
-                    <a className="ml-3 text-gray-500" href='https://www.instagram.com/developer_kaushal/' >
+                    <a className="ml-3 text-gray-500" href='' >
                         
                         <svg
                             fill="none"
@@ -81,7 +82,7 @@ function Footer() {
                     </a>
 
                     {/* Icon 4  */}
-                    <a className="ml-3 text-gray-500">
+                    <a className="ml-3 text-gray-500" target='_blank' href='https://www.linkedin.com/in/rishi-arora-b9a4b1341/' >
                         <svg
                             fill="currentColor"
                             stroke="currentColor"

@@ -1,0 +1,17 @@
+@media (max-width: 500px) {
+    main{
+        flex-direction: column-reverse;
+    }
+
+    .right{
+        text-align: center;
+    }
+    .right h1{
+        font-size: 11vw;
+        text-align: center;
+        margin-top: 20px;
+    }
+    .right p{
+        width: 100%;
+    }
+}
